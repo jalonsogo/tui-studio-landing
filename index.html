@@ -1145,9 +1145,12 @@
   </script>
 
   <script>
-    NeonGlass.initButton(document.getElementById('navBtn'));
-    NeonGlass.initButton(document.getElementById('heroBtn'));
-    NeonGlass.initButton(document.getElementById('ctaBtn'));
+    const DOWNLOAD_URL = 'https://github.com/jalonsogo/tui-studio-desktop/releases';
+    ['navBtn', 'heroBtn', 'ctaBtn'].forEach(id => {
+      const btn = document.getElementById(id);
+      NeonGlass.initButton(btn);
+      btn.addEventListener('click', () => window.open(DOWNLOAD_URL, '_blank'));
+    });
   </script>
   <script>
     /* ── Lightbox ── */
