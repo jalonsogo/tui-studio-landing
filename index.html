@@ -204,6 +204,38 @@
       0%, 100% { opacity: 1; } 50% { opacity: 0.2; }
     }
 
+    .whats-new-badge {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 14px 3px;
+      border: 1px solid rgba(74,222,128,0.25);
+      background: rgba(74,222,128,0.05);
+      font-family: var(--font-vt);
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      color: var(--text-mid);
+      margin-bottom: 20px;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+      border-radius: 3px;
+      max-width: 100%;
+    }
+    .whats-new-badge:hover {
+      border-color: rgba(74,222,128,0.45);
+      background: rgba(74,222,128,0.09);
+    }
+    .whats-new-ver { color: var(--green); }
+    .whats-new-sep { color: var(--text-dim); }
+    .whats-new-change {
+      color: var(--text-mid);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 300px;
+    }
+    .whats-new-arrow { color: var(--green-dim); margin-left: 2px; }
+
     .hero h1 {
       font-family: var(--font-vt);
       font-size: 32px;
@@ -800,6 +832,16 @@
     <div class="hero-glass">
       <img class="hero-computer" src="assets/Computer.png" alt="TUIStudio Editor" />
 
+      <a id="whats-new-badge" class="whats-new-badge"
+         href="https://github.com/jalonsogo/tui-studio/blob/main/CHANGELOG.md"
+         target="_blank" rel="noopener">
+        <span class="hero-badge-dot"></span>
+        <span class="whats-new-ver" id="whats-new-ver"></span>
+        <span class="whats-new-sep">·</span>
+        <span class="whats-new-change" id="whats-new-change"></span>
+        <span class="whats-new-arrow">↗</span>
+      </a>
+
       <h1>
         Design Terminal UIs. <em>Visually</em><span class="cursor"></span>
       </h1>
@@ -1145,6 +1187,46 @@
         }
       });
     });
+  </script>
+
+  <script>
+    /* ── Changelog: live version + What's New badge ── */
+    (async function () {
+      try {
+        const res = await fetch(
+          'https://raw.githubusercontent.com/jalonsogo/tui-studio/main/CHANGELOG.md',
+          { cache: 'no-cache' }
+        );
+        if (!res.ok) return;
+        const text = await res.text();
+
+        // Parse latest version header: ## [0.3.6] - 2026-02-22
+        const verMatch = text.match(/^##\s+\[([0-9][^\]]*)\]/m);
+        if (!verMatch) return;
+        const version = verMatch[1];
+
+        // Extract the latest version's block (up to the next ## heading)
+        const blockStart = text.indexOf(verMatch[0]);
+        const blockEnd = text.indexOf('\n## ', blockStart + 1);
+        const block = blockEnd > -1 ? text.slice(blockStart, blockEnd) : text.slice(blockStart);
+
+        // First bullet point in the block (strip markdown bold)
+        const bulletMatch = block.match(/^[-*]\s+(.+)$/m);
+        const firstChange = bulletMatch
+          ? bulletMatch[1].replace(/\*\*/g, '').trim()
+          : null;
+
+        // Show the What's New badge in the hero
+        const badge    = document.getElementById('whats-new-badge');
+        const verEl    = document.getElementById('whats-new-ver');
+        const changeEl = document.getElementById('whats-new-change');
+        if (badge && verEl && changeEl) {
+          verEl.textContent    = 'v' + version;
+          changeEl.textContent = firstChange || '';
+          badge.style.display  = 'inline-flex';
+        }
+      } catch (_) { /* silently fail — never break the page */ }
+    })();
   </script>
 
   <script>
