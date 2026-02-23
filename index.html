@@ -148,6 +148,14 @@
     }
     .apple-logo::before { content: '\F8FF'; }
 
+    .win-logo {
+      font-size: 1em;
+      line-height: 1;
+      vertical-align: middle;
+      margin-right: 3px;
+      opacity: 0.9;
+    }
+
     /* small button variant */
     .ng-platform--sm {
       padding: 2px 2px 8px;
@@ -860,7 +868,7 @@
             <span class="ng-btn-label"><span class="apple-logo"></span> Download for Mac</span>
           </button>
         </div>
-        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:0.12em;">
+        <span id="heroHint" style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:0.12em;">
            Apple Silicon &nbsp;·&nbsp; M1 &nbsp;M2 &nbsp;M3 &nbsp;M4
         </span>
         <span style="font-family:var(--font-mono);font-size:12px;color:var(--text-mid);letter-spacing:0.05em;">
@@ -1131,7 +1139,7 @@
   <section class="cta-section">
     <p class="eyebrow" style="justify-content:center;display:flex">Get Started</p>
     <h2 class="section-heading">Ready to build<br>your TUI?</h2>
-    <p class="section-sub">
+    <p id="ctaSub" class="section-sub">
       Native Mac app for Apple Silicon.<br>No install fuss — download and start designing immediately.
     </p>
     <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
@@ -1142,7 +1150,7 @@
           <span class="ng-btn-label"><span class="apple-logo"></span> Download for Mac</span>
         </button>
       </div>
-      <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-mid);letter-spacing:0.12em;">
+      <span id="ctaHint" style="font-family:var(--font-mono);font-size:11px;color:var(--text-mid);letter-spacing:0.12em;">
          Apple Silicon &nbsp;·&nbsp; M1 &nbsp;M2 &nbsp;M3 &nbsp;M4
       </span>
     </div>
@@ -1230,12 +1238,57 @@
   </script>
 
   <script>
-    const DOWNLOAD_URL = 'https://github.com/jalonsogo/tui-studio-desktop/releases';
-    ['navBtn', 'heroBtn', 'ctaBtn'].forEach(id => {
-      const btn = document.getElementById(id);
-      NeonGlass.initButton(btn);
-      btn.addEventListener('click', () => window.open(DOWNLOAD_URL, '_blank'));
-    });
+    (function () {
+      const ua = navigator.userAgent;
+      const isWindows = /Win/i.test(ua);
+      const isMac     = /Mac/i.test(ua) && !/iPhone|iPad/i.test(ua);
+
+      const RELEASES   = 'https://github.com/jalonsogo/tui-studio-desktop/releases';
+      const BASE       = RELEASES + '/latest/download';
+      const MAC_URL    = BASE + '/TUIStudio.dmg';
+      const WIN_URL    = BASE + '/TUIStudio-Setup.exe';
+      const LINUX_URL  = BASE + '/TUIStudio-amd64.deb';
+
+      const isLinux   = /Linux/i.test(ua) && !/Android/i.test(ua);
+
+      let downloadUrl, btnLabel, hintText, ctaSubText;
+
+      if (isWindows) {
+        downloadUrl = WIN_URL;
+        btnLabel    = '<span class="win-logo">⊞</span> Download for Windows';
+        hintText    = 'Windows 10 / 11 &nbsp;·&nbsp; x64 &nbsp;ARM64';
+        ctaSubText  = 'Native Windows app.<br>No install fuss — download and start designing immediately.';
+      } else if (isMac) {
+        downloadUrl = MAC_URL;
+        btnLabel    = '<span class="apple-logo"></span> Download for Mac';
+        hintText    = 'Apple Silicon &nbsp;·&nbsp; M1 &nbsp;M2 &nbsp;M3 &nbsp;M4';
+        ctaSubText  = 'Native Mac app for Apple Silicon.<br>No install fuss — download and start designing immediately.';
+      } else if (isLinux) {
+        downloadUrl = LINUX_URL;
+        btnLabel    = 'Download for Linux';
+        hintText    = 'Debian / Ubuntu &nbsp;·&nbsp; amd64';
+        ctaSubText  = 'Native Linux app (.deb).<br>No install fuss — download and start designing immediately.';
+      } else {
+        downloadUrl = RELEASES;
+        btnLabel    = 'Download';
+        hintText    = 'macOS &nbsp;·&nbsp; Windows &nbsp;·&nbsp; Linux';
+        ctaSubText  = 'Available for macOS, Windows, and Linux.<br>Download and start designing immediately.';
+      }
+
+      ['navBtn', 'heroBtn', 'ctaBtn'].forEach(id => {
+        const btn = document.getElementById(id);
+        NeonGlass.initButton(btn);
+        btn.querySelector('.ng-btn-label').innerHTML = btnLabel;
+        btn.addEventListener('click', () => window.open(downloadUrl, '_blank'));
+      });
+
+      const heroHint = document.getElementById('heroHint');
+      const ctaHint  = document.getElementById('ctaHint');
+      const ctaSub   = document.getElementById('ctaSub');
+      if (heroHint) heroHint.innerHTML = hintText;
+      if (ctaHint)  ctaHint.innerHTML  = hintText;
+      if (ctaSub)   ctaSub.innerHTML   = ctaSubText;
+    })();
   </script>
   <script>
     /* ── Lightbox ── */
