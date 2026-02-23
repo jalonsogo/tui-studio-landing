@@ -910,7 +910,7 @@
         <div class="os-selector">
           <button class="os-tab" data-os="mac"><span class="apple-logo"></span>macOS</button>
           <button class="os-tab" data-os="win"><span class="win-logo">⊞</span>Windows</button>
-          <button class="os-tab" data-os="linux">🐧 Linux</button>
+          <button class="os-tab" data-os="docker">🐳 Docker</button>
         </div>
         <span id="heroHint" style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:0.12em;">
            Apple Silicon &nbsp;·&nbsp; M1 &nbsp;M2 &nbsp;M3 &nbsp;M4
@@ -1304,11 +1304,11 @@
           hint:   'Windows 10 / 11 &nbsp;·&nbsp; x64 &nbsp;ARM64',
           ctaSub: 'Native Windows app.<br>No install fuss — download and start designing immediately.',
         },
-        linux: {
-          url:    BASE + '/TUIStudio-amd64.deb',
-          label:  'Download for Linux',
-          hint:   'Debian / Ubuntu &nbsp;·&nbsp; amd64',
-          ctaSub: 'Native Linux app (.deb).<br>No install fuss — download and start designing immediately.',
+        docker: {
+          url:    'https://hub.docker.com/repository/docker/javieralonso716/tui-studio-web',
+          label:  '🐳 Run with Docker',
+          hint:   'Web-based &nbsp;·&nbsp; Any OS &nbsp;·&nbsp; No install',
+          ctaSub: 'Run TUIStudio in a container.<br>Works on any OS — no install fuss.',
         },
       };
 
@@ -1353,7 +1353,7 @@
       const ua = navigator.userAgent;
       const detected = /Win/i.test(ua) ? 'win'
                      : /Mac/i.test(ua) && !/iPhone|iPad/i.test(ua) ? 'mac'
-                     : /Linux/i.test(ua) && !/Android/i.test(ua) ? 'linux'
+                     : /Linux/i.test(ua) && !/Android/i.test(ua) ? 'docker'
                      : null;
       if (detected) setOS(detected);
     })();
